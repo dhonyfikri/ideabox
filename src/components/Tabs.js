@@ -1,131 +1,241 @@
-import React from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import Home from '../modules/home/screen/Home.route';
-import Explore from '../modules/explore/screen/Explore.route';
-import Event from '../modules/event/screen/Event.route';
 import {NativeBaseProvider} from 'native-base';
-import {windowHeight} from './WindowDimensions';
+import React from 'react';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  StatusBar,
+} from 'react-native';
+import {
+  IcDashboardActive,
+  IcDashboardInactive,
+  IcEventActive,
+  IcEventInactive,
+  IcHomeActive,
+  IcHomeInactive,
+  IcUserActive,
+  IcUserInactive,
+} from '../assets/icon';
+import Event from '../modules/event/screen/Event.route';
+import Explore from '../modules/explore/screen/Explore.route';
+import Home from '../modules/home/screen/Home.route';
+import Main from '../modules/main/screen/Main.screen';
 import Trending from '../modules/trending/screen/Trending.route';
+import {colors} from '../utils/ColorsConfig/Colors';
+import fonts from '../utils/FontsConfig/Fonts';
+import Gap from './Gap';
+import RoutesProfile from '../config/Routes/RoutesProfile';
+import Header from './Header';
+import Profile from '../modules/profile/screen/Profile.screen';
 
 const Tab = createBottomTabNavigator();
 
-const TabNavigation = () => {
+const NormalTabIcon = ({focused, icon, label}) => {
   return (
-    <NativeBaseProvider>
-      <Tab.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          tabBarShowLabel: false,
-          tabBarStyle: {
-            // position: 'absolute',
-            height: windowHeight / 12.34,
-            backgroundColor: '#FFFFFF',
-            shadowColor: '#000',
-            shadowOffset: {
-              width: 0,
-              height: 7,
-            },
-            shadowOpacity: 0.41,
-            shadowRadius: 9.11,
-
-            elevation: 14,
-          },
+    <View style={styles.wrapIcon}>
+      {icon}
+      <Gap height={6} />
+      <Text
+        style={{
+          fontFamily: focused ? fonts.secondary[500] : fonts.secondary[400],
+          fontSize: 12,
+          lineHeight: 15,
+          color: focused ? colors.primary : colors.border,
         }}>
-        <Tab.Screen
-          name="Home"
-          component={Home}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({focused}) => (
-              <View style={styles.wrapIcon}>
-                <Image
-                  source={require('../assets/icon/home.png')}
-                  resizeMode="contain"
-                  style={{
-                    tintColor: focused ? '#085D7A' : '#B4B4B4',
-                    width: 20,
-                    height: 20,
-                  }}
-                />
-                <Text style={{color: focused ? '#085D7A' : '#B4B4B4'}}>
-                  Home
-                </Text>
-              </View>
-            ),
-          }}
+        {label}
+      </Text>
+    </View>
+  );
+};
+
+const CustomTabIcon = ({children, onPress}) => {
+  return (
+    <View
+      activeOpacity={1}
+      style={{
+        width: 90,
+        height: 96,
+        top: -22,
+        paddingBottom: 10,
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+      }}>
+      <View
+        style={{
+          backgroundColor: colors.tertiary,
+          width: 65,
+          height: 62.4,
+          borderRadius: 65 / 2,
+          justifyContent: 'center',
+          alignItems: 'center',
+          elevation: 2,
+        }}>
+        <TouchableOpacity
+          onPress={onPress}
+          style={{
+            backgroundColor: colors.primary,
+            width: 48.75,
+            height: 46.8,
+            borderRadius: 48 / 2,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+          <Image
+            source={require('../assets/icon/plus.png')}
+            style={{width: 25, height: 25}}
+          />
+        </TouchableOpacity>
+      </View>
+      <Gap height={5.4} />
+      <View
+        style={{
+          width: '100%',
+          height: 15,
+          justifyContent: 'flex-start',
+        }}>
+        {children}
+      </View>
+    </View>
+  );
+};
+
+const TabNavigation = ({navigation, route}) => {
+  return (
+    <>
+      <StatusBar backgroundColor={colors.secondary} barStyle="dark-content" />
+      <NativeBaseProvider>
+        <Header
+          withLogo
+          onNotificationPress={() => navigation.navigate('Notification')}
         />
-        <Tab.Screen
-          name="Explore"
-          component={Explore}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({focused}) => (
-              <View style={styles.wrapIcon}>
-                <Image
-                  source={require('../assets/icon/explore.png')}
-                  resizeMode="contain"
-                  style={{
-                    tintColor: focused ? '#085D7A' : '#B4B4B4',
-                    width: 20,
-                    height: 20,
-                  }}
+        <Tab.Navigator
+          backBehavior="initialRoute"
+          initialRouteName="Home"
+          screenOptions={{
+            tabBarShowLabel: false,
+            tabBarStyle: {
+              // position: 'absolute',
+              height: 76,
+              backgroundColor: colors.tertiary,
+              shadowColor: '#000',
+              shadowOffset: {
+                width: 0,
+                height: 7,
+              },
+              shadowOpacity: 0.41,
+              shadowRadius: 9.11,
+              elevation: 10,
+            },
+          }}>
+          <Tab.Screen
+            name="Home"
+            component={Home}
+            options={{
+              headerShown: false,
+              tabBarIcon: ({focused}) => (
+                <NormalTabIcon
+                  focused={focused}
+                  icon={focused ? <IcHomeActive /> : <IcHomeInactive />}
+                  label="Home"
                 />
-                <Text style={{color: focused ? '#085D7A' : '#B4B4B4'}}>
-                  Explore
-                </Text>
-              </View>
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Event"
-          component={Event}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({focused}) => (
-              <View style={styles.wrapIcon}>
-                <Image
-                  source={require('../assets/icon/event.png')}
-                  resizeMode="contain"
-                  style={{
-                    tintColor: focused ? '#085D7A' : '#B4B4B4',
-                    width: 20,
-                    height: 20,
-                  }}
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Explore"
+            component={Explore}
+            options={{
+              headerShown: false,
+              tabBarIcon: ({focused}) => (
+                <NormalTabIcon
+                  focused={focused}
+                  icon={focused ? <IcEventActive /> : <IcEventInactive />}
+                  label="Events"
                 />
-                <Text style={{color: focused ? '#085D7A' : '#B4B4B4'}}>
-                  Event
-                </Text>
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Create"
+            component={() => (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text>Create Idea</Text>
               </View>
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Trending"
-          component={Trending}
-          options={{
-            headerShown: false,
-            tabBarIcon: ({focused}) => (
-              <View style={styles.wrapIcon}>
-                <Image
-                  source={require('../assets/icon/trend.png')}
-                  resizeMode="contain"
-                  style={{
-                    tintColor: focused ? '#085D7A' : '#B4B4B4',
-                    width: 20,
-                    height: 20,
-                  }}
+            )}
+            options={{
+              headerShown: false,
+              tabBarIcon: ({focused}) => (
+                <>
+                  <Text
+                    style={{
+                      width: '100%',
+                      textAlign: 'center',
+                      fontFamily: focused
+                        ? fonts.secondary[500]
+                        : fonts.secondary[400],
+                      fontSize: 12,
+                      lineHeight: 15,
+                      color: focused ? colors.primary : colors.border,
+                    }}>
+                    Create Idea
+                  </Text>
+                </>
+              ),
+              tabBarButton: props => {
+                return <CustomTabIcon {...props} />;
+              },
+            }}
+          />
+          <Tab.Screen
+            name="Dashboard"
+            component={() => (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Text>Dashboard</Text>
+              </View>
+            )}
+            options={{
+              headerShown: false,
+              tabBarIcon: ({focused}) => (
+                <NormalTabIcon
+                  focused={focused}
+                  icon={
+                    focused ? <IcDashboardActive /> : <IcDashboardInactive />
+                  }
+                  label="Dashboard"
                 />
-                <Text style={{color: focused ? '#085D7A' : '#B4B4B4'}}>
-                  Trending
-                </Text>
-              </View>
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    </NativeBaseProvider>
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Profile"
+            component={Profile}
+            options={{
+              headerShown: false,
+              tabBarIcon: ({focused}) => (
+                <NormalTabIcon
+                  focused={focused}
+                  icon={focused ? <IcUserActive /> : <IcUserInactive />}
+                  label="User"
+                />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </NativeBaseProvider>
+    </>
   );
 };
 
@@ -135,5 +245,6 @@ const styles = StyleSheet.create({
   wrapIcon: {
     alignItems: 'center',
     justifyContent: 'center',
+    height: '100%',
   },
 });
